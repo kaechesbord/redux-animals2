@@ -1,28 +1,25 @@
-import {useEffect} from 'react'
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
-import axios  from 'axios'
-import { addAnimals } from './animals'
+import { fetchData } from "./animals";
 import '../App.css';
+import { Loader } from "./Loader";
+
 
 
 const Display = () => {
-
-  const animals = useSelector((state) => state.animals.animals.animalDescription)
   const dispatch = useDispatch()
+  const animals = useSelector((state) => state.animals.animals.animalDescription)
+  const loading = useSelector((state) => state.animals.animals.isLoading)
+useEffect(() => {
+  dispatch(fetchData())
+}, [])
 
-
-  useEffect(()=> {
-    const fetchData = async () => {
-      const data = await axios.get(("https://zoo-animal-api.herokuapp.com/animals/rand/10"))
-      dispatch(addAnimals(data.data))
-    }
-    fetchData()
-  },[])
- 
 
   return (
     <div>
-{ animals.map(animal => {
+  
+{ loading ? <Loader/> : 
+animals?.map(animal => {
    const img = animal.image_link
     return(
         <div className='span' key={animal.id}>
@@ -31,10 +28,12 @@ const Display = () => {
             <h3>Diet: {animal.diet}</h3>
             <img id='img' src={img} alt='slika'></img>
         </div>
+       
     )
 } )}
     </div>
   )
 }
+
 
 export default Display
